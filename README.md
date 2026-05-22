@@ -63,3 +63,4 @@ No necesitas esperar hasta las 9:00 AM del día siguiente para verificar que tod
 ## 💡 Notas Adicionales
 * **Modificación de envíos**: Si en el futuro deseas rastrear nuevos códigos o cambiar los existentes, simplemente edita la variable `TRACKING_NUMBERS` en la línea 5 del archivo `index.js` y sube los cambios a tu repositorio.
 * **Precisión horaria**: Las tareas de tipo cron en GitHub Actions son gratuitas, por lo que a veces pueden iniciarse con una demora de entre 10 y 20 minutos respecto a la hora programada (9:00 AM), pero su ejecución diaria está garantizada de forma autónoma.
+# shipping-tracker
