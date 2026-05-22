@@ -1,8 +1,22 @@
-# Script de automatización para subir el proyecto a GitHub
-Write-Host "Inicializando repositorio Git local..." -ForegroundColor Cyan
+# Script interactivo de automatización para subir el proyecto a GitHub
+
+# 1. Solicitar o confirmar el nombre de usuario de GitHub
+$defaultUser = "Claudio.Abril"
+Write-Host "Configuración de GitHub" -ForegroundColor Cyan
+Write-Host "Ingresa tu nombre de usuario de GitHub (handle de la URL, ej: claudio-abril)."
+$user = Read-Host "Presiona Enter para usar el valor predeterminado [$defaultUser]"
+if ([string]::IsNullOrWhiteSpace($user)) {
+    $user = $defaultUser
+}
+
+# Limpiar posibles espacios o puntos al inicio/final
+$user = $user.Trim()
+
+# 2. Inicializar el repositorio Git
+Write-Host "`nInicializando repositorio Git local..." -ForegroundColor Cyan
 git init
 
-# Crear archivo .gitignore para evitar subir el archivo .env (con tu clave de Gmail) y la carpeta node_modules
+# Crear archivo .gitignore
 if (-not (Test-Path .gitignore)) {
     @"
 node_modules/
@@ -13,25 +27,44 @@ node_modules/
 }
 
 git add .
-git commit -m "Initial commit: Shipping Tracker"
+git commit -m "Initial commit: Shipping Tracker" 2>$null
 
 Write-Host "Configurando rama principal a 'main'..." -ForegroundColor Cyan
 git branch -M main
 
-$repoUrl = "https://github.com/Claudio.Abril/shipping-tracker.git"
-Write-Host "Configurando repositorio remoto en: $repoUrl" -ForegroundColor Cyan
+# 3. Definir y configurar el repositorio remoto
+$repoUrl = "https://github.com/$user/shipping-tracker.git"
+Write-Host "`nConfigurando repositorio remoto en: $repoUrl" -ForegroundColor Cyan
 
-# Eliminar el origin si ya existía para evitar conflictos
+# Eliminar origen si existía previamente
 git remote remove origin 2>$null
 git remote add origin $repoUrl
 
-Write-Host "Subiendo código a GitHub..." -ForegroundColor Yellow
-Write-Host "Nota: Se abrirá una ventana de inicio de sesión de GitHub en tu navegador si no has iniciado sesión antes en Git." -ForegroundColor Gray
+# 4. Explicar los requisitos antes de subir
+Write-Host "`n[IMPORTANTE] Requisitos previos:" -ForegroundColor Yellow
+Write-Host "1. Debes haber creado el repositorio vacío llamado 'shipping-tracker' en tu cuenta de GitHub."
+Write-Host "   Puedes crearlo desde: https://github.com/new"
+Write-Host "2. El repositorio debe estar vacío (sin README, sin .gitignore y sin licencia)."
+Write-Host "3. Asegúrate de que el nombre de usuario '$user' es el que figura en la URL de tu perfil de GitHub.`n"
+
+$confirm = Read-Host "¿Has verificado los puntos anteriores y deseas continuar? (S/N)"
+if ($confirm -ne "S" -and $confirm -ne "s" -and $confirm -ne "si" -and $confirm -ne "sí") {
+    Write-Host "Operación cancelada por el usuario. Crea el repositorio en GitHub y vuelve a ejecutar el script." -ForegroundColor Yellow
+    Exit
+}
+
+# 5. Intentar subir el código
+Write-Host "`nSubiendo código a GitHub..." -ForegroundColor Yellow
+Write-Host "Nota: Si Git te lo solicita, inicia sesión en la ventana del navegador que se abrirá." -ForegroundColor Gray
 git push -u origin main
 
 if ($LASTEXITCODE -eq 0) {
     Write-Host "`n¡Código subido exitosamente a GitHub!" -ForegroundColor Green
-    Write-Host "Ahora puedes ir a https://github.com/Claudio.Abril/shipping-tracker/settings/secrets/actions para configurar tus Secretos." -ForegroundColor Green
+    Write-Host "Ahora puedes configurar tus Secretos en: https://github.com/$user/shipping-tracker/settings/secrets/actions" -ForegroundColor Green
 } else {
-    Write-Host "`nHubo un problema al subir a GitHub. Asegúrate de haber creado el repositorio vacío llamado 'shipping-tracker' en tu cuenta de GitHub (Claudio.Abril)." -ForegroundColor Red
+    Write-Host "`nError al subir el código a GitHub." -ForegroundColor Red
+    Write-Host "Causas comunes:" -ForegroundColor Gray
+    Write-Host " - El repositorio 'shipping-tracker' no ha sido creado en GitHub bajo la cuenta '$user'." -ForegroundColor Gray
+    Write-Host " - El nombre de usuario '$user' no es correcto (verifica tu nombre en la URL de tu perfil de GitHub)." -ForegroundColor Gray
+    Write-Host " - Problemas de autenticación con tus credenciales de GitHub." -ForegroundColor Gray
 }
