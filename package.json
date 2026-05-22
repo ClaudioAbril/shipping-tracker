@@ -1,0 +1,14 @@
+{
+  "name": "shipping-tracker-cloud",
+  "version": "1.0.0",
+  "description": "Rastreador diario autónomo de envíos en 17TRACK con reportes por correo electrónico",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "nodemailer": "^6.9.13",
+    "puppeteer": "^22.10.0"
+  }
+}
