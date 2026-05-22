@@ -1,7 +1,7 @@
 # Script interactivo de automatización para subir el proyecto a GitHub
 
 # 1. Solicitar o confirmar el nombre de usuario de GitHub
-$defaultUser = "Claudio.Abril"
+$defaultUser = "ClaudioAbril"
 Write-Host "Configuración de GitHub" -ForegroundColor Cyan
 Write-Host "Ingresa tu nombre de usuario de GitHub (handle de la URL, ej: claudio-abril)."
 $user = Read-Host "Presiona Enter para usar el valor predeterminado [$defaultUser]"
