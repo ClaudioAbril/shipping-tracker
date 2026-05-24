@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Estado de envíos - MailAmericas</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f9f9f9;
+            color: #333;
+        }
+
+        h2 {
+            color: #0066cc;
+        }
+
+        .envio {
+            background: #fff;
+            border: 1px solid #ddd;
+            margin: 20px 0;
+            padding: 15px;
+            border-radius: 8px;
+        }
+
+        .barra {
+            display: flex;
+            justify-content: space-between;
+            margin: 10px 0;
+        }
+
+        .etapa {
+            flex: 1;
+            text-align: center;
+            font-size: 12px;
+            position: relative;
+        }
+
+        .etapa::before {
+            content: "";
+            display: block;
+            height: 10px;
+            margin-bottom: 5px;
+            border-radius: 5px;
+            background: #ddd;
+        }
+
+        .etapa.activa::before {
+            background: #4caf50;
+        }
+
+        ul {
+            font-size: 13px;
+        }
+
+        iframe {
+            width: 100%;
+            height: 300px;
+            border: none;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <h2>📦 Estado de envíos en MailAmericas</h2>
+
+    <div class="envio">
+        <h3>MLAR086123485EX</h3>
+        <p><strong>Estado actual:</strong> En tránsito internacional</p>
+        <div class="barra">
+            <div class="etapa activa">Almacén</div>
+            <div class="etapa activa">En Tránsito</div>
+            <div class="etapa">Llegada</div>
+            <div class="etapa">Aduana</div>
+            <div class="etapa">Distribución</div>
+            <div class="etapa">Última Milla</div>
+            <div class="etapa">Entregado</div>
+        </div>
+        <ul>
+            <li>22 mayo, 09:12 → Camino al aeropuerto</li>
+            <li>22 mayo, 16:40 → Camino al aeropuerto</li>
+        </ul>
+        <iframe src="https://mailamericas.com/tracking?number_id=MLAR086123485EX"></iframe>
+    </div>
+
+    <div class="envio">
+        <h3>MLAR086122180EX</h3>
+        <p><strong>Estado actual:</strong> En tránsito internacional</p>
+        <div class="barra">
+            <div class="etapa activa">Almacén</div>
+            <div class="etapa activa">En Tránsito</div>
+            <div class="etapa">Llegada</div>
+            <div class="etapa">Aduana</div>
+            <div class="etapa">Distribución</div>
+            <div class="etapa">Última Milla</div>
+            <div class="etapa">Entregado</div>
+        </div>
+        <ul>
+            <li>22 mayo, 09:12 → Camino al aeropuerto</li>
+            <li>22 mayo, 16:40 → Camino al aeropuerto</li>
+        </ul>
+        <iframe src="https://mailamericas.com/tracking?number_id=MLAR086122180EX"></iframe>
+    </div>
+
+    <p>👉 Ambos envíos están en tránsito aéreo hacia Argentina. El siguiente paso será la llegada al país destino y
+        luego el paso por aduana.</p>
+</body>
+
+</html>
