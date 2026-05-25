@@ -1,5 +1,120 @@
 {
-  "updatedAt": null,
-  "packages": [],
+  "updatedAt": "2026-05-25T00:35:38.335Z",
+  "packages": [
+    {
+      "number": "MLAR086122180EX",
+      "statusLabel": "En tránsito internacional",
+      "activeStageIndex": 1,
+      "etapas": [
+        "Almacén",
+        "En Tránsito",
+        "Llegada",
+        "Aduana",
+        "Distribución",
+        "Última Milla",
+        "Entregado"
+      ],
+      "events": [
+        {
+          "time": "22 may, 16:40",
+          "description": "Camino al aeropuerto",
+          "location": "Tránsito a país destino — WORLDWIDE HK"
+        },
+        {
+          "time": "22 may, 09:12",
+          "description": "Camino al aeropuerto",
+          "location": "Tránsito a país destino — DGM"
+        },
+        {
+          "time": "21 may, 14:27",
+          "description": "Procesado",
+          "location": "Almacén de origen — DGM"
+        },
+        {
+          "time": "21 may, 10:56",
+          "description": "Despachado",
+          "location": "Almacén de origen — DGM"
+        },
+        {
+          "time": "21 may, 09:27",
+          "description": "Recibido en Warehouse de Origen",
+          "location": "Almacén de origen — DGM"
+        },
+        {
+          "time": "19 may, 12:22",
+          "description": "CUIL validado OK",
+          "location": "Tax ID"
+        },
+        {
+          "time": "19 may, 12:22",
+          "description": "Validación TN OK",
+          "location": "Tax ID"
+        },
+        {
+          "time": "19 may, 12:22",
+          "description": "Etiqueta impresa",
+          "location": "Orden creada"
+        }
+      ],
+      "trackingUrl": "https://mailamericas.com/tracking?number_id=MLAR086122180EX"
+    },
+    {
+      "number": "MLAR086123485EX",
+      "statusLabel": "En tránsito internacional",
+      "activeStageIndex": 1,
+      "etapas": [
+        "Almacén",
+        "En Tránsito",
+        "Llegada",
+        "Aduana",
+        "Distribución",
+        "Última Milla",
+        "Entregado"
+      ],
+      "events": [
+        {
+          "time": "22 may, 16:40",
+          "description": "Camino al aeropuerto",
+          "location": "Tránsito a país destino — WORLDWIDE HK"
+        },
+        {
+          "time": "22 may, 09:12",
+          "description": "Camino al aeropuerto",
+          "location": "Tránsito a país destino — DGM"
+        },
+        {
+          "time": "21 may, 14:21",
+          "description": "Procesado",
+          "location": "Almacén de origen — DGM"
+        },
+        {
+          "time": "21 may, 11:02",
+          "description": "Despachado",
+          "location": "Almacén de origen — DGM"
+        },
+        {
+          "time": "21 may, 10:10",
+          "description": "Recibido en Warehouse de Origen",
+          "location": "Almacén de origen — DGM"
+        },
+        {
+          "time": "19 may, 12:10",
+          "description": "Validación TN OK",
+          "location": "Tax ID"
+        },
+        {
+          "time": "19 may, 12:10",
+          "description": "CUIL validado OK",
+          "location": "Tax ID"
+        },
+        {
+          "time": "19 may, 12:10",
+          "description": "Etiqueta impresa",
+          "location": "Orden creada"
+        }
+      ],
+      "trackingUrl": "https://mailamericas.com/tracking?number_id=MLAR086123485EX"
+    }
+  ],
   "rejected": []
 }

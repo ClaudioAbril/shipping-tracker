@@ -24,8 +24,6 @@ jobs:
       - run: npm install
 
       - name: Generar tracking-cache.json
-        env:
-          TRACK_17_TOKEN: ${{ secrets.TRACK_17_TOKEN }}
         run: node scripts/build-tracking-cache.js
 
       - name: Publicar caché en el repositorio

@@ -254,7 +254,71 @@
                     return;
                 }
                 apiHint.hidden = false;
-                apiHint.textContent = 'En GitHub Pages los movimientos se cargan desde tracking-cache.json (si existe) o desde un servidor API (?api=URL). Para datos en vivo: npm run envios y abrí http://localhost:3456/Envios.html';
+                apiHint.textContent = 'En GitHub Pages, si el navegador no puede llamar a MailAmericas directamente, se usa tracking-cache.json (workflow «Actualizar caché Envios» en Actions). También: npm run envios → http://localhost:3456/Envios.html';
+            }
+
+            var MONTHS_ES = {
+                '01': 'ene', '02': 'feb', '03': 'mar', '04': 'abr', '05': 'may', '06': 'jun',
+                '07': 'jul', '08': 'ago', '09': 'sep', '10': 'oct', '11': 'nov', '12': 'dic'
+            };
+
+            function formatEventTime(date, time) {
+                if (!date) return time || '';
+                var parts = date.split('-');
+                if (parts.length === 3) {
+                    var day = parseInt(parts[2], 10);
+                    var mon = MONTHS_ES[parts[1]] || parts[1];
+                    var label = day + ' ' + mon;
+                    return time ? label + ', ' + time : label;
+                }
+                return time ? date + ' ' + time : date;
+            }
+
+            function normalizeMailAmericas(payload, fallbackNumber) {
+                var d = payload && payload.data ? payload.data : null;
+                if (!d) return null;
+                var number = (d.trackingNumber || fallbackNumber || '').toUpperCase();
+                var events = (d.events || []).map(function (evt) {
+                    return {
+                        time: formatEventTime(evt.date, evt.time),
+                        description: evt.description || evt.status || 'Evento',
+                        location: [evt.status, evt.location].filter(Boolean).join(' — ')
+                    };
+                });
+                var step = typeof d.statusStep === 'number' ? d.statusStep : 1;
+                return {
+                    number: number,
+                    statusLabel: d.statusStepName || d.status || 'Desconocido',
+                    activeStageIndex: Math.min(ETAPAS.length - 1, Math.max(0, step - 1)),
+                    events: events,
+                    trackingUrl: trackingUrl(number)
+                };
+            }
+
+            async function fetchFromMailAmericasDirect(codes) {
+                var packages = [];
+                var rejected = [];
+                for (var i = 0; i < codes.length; i++) {
+                    var code = codes[i];
+                    try {
+                        var res = await fetch('https://mailamericas.com/api/tracking', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+                            body: JSON.stringify({ trackingNumber: code, language: 'es' })
+                        });
+                        if (!res.ok) throw new Error('HTTP ' + res.status);
+                        var json = await res.json();
+                        var pkg = normalizeMailAmericas(json, code);
+                        if (!pkg) throw new Error('Sin datos');
+                        packages.push(pkg);
+                    } catch (err) {
+                        rejected.push({ number: code, message: err.message });
+                    }
+                }
+                if (packages.length === 0 && rejected.length === codes.length) {
+                    return null;
+                }
+                return { packages: packages, rejected: rejected, fromMailAmericas: true };
             }
 
             function setStatus(text, type) {
@@ -408,9 +472,13 @@
             }
 
             async function fetchTrackingData(codes) {
+                var direct = await fetchFromMailAmericasDirect(codes);
+                if (direct && direct.packages.length > 0) {
+                    return direct;
+                }
+
                 var base = resolveApiBase();
                 var apiUrl = (base || '') + '/api/track';
-
                 try {
                     var res = await fetch(apiUrl, {
                         method: 'POST',
@@ -421,7 +489,11 @@
                         return await res.json();
                     }
                 } catch (e) {
-                    /* intentar caché */
+                    /* proxy local no disponible */
+                }
+
+                if (direct) {
+                    return direct;
                 }
 
                 try {
@@ -429,11 +501,14 @@
                     if (cacheRes.ok) {
                         var cache = await cacheRes.json();
                         var wanted = new Set(codes);
-                        return {
+                        var filtered = {
                             packages: (cache.packages || []).filter(function (p) { return wanted.has(p.number); }),
                             rejected: (cache.rejected || []).filter(function (r) { return wanted.has(r.number); }),
                             fromCache: true
                         };
+                        if (filtered.packages.length > 0 || filtered.rejected.length > 0) {
+                            return filtered;
+                        }
                     }
                 } catch (e2) {
                     /* sin caché */
@@ -466,7 +541,7 @@
                         enviosList.innerHTML = '';
                         enviosList.appendChild(renderRejected({
                             number: code,
-                            message: 'No hay API disponible. Ejecutá: npm run envios (con TRACK_17_TOKEN en .env)'
+                            message: 'No se pudo consultar. Probá npm run envios o actualizá tracking-cache.json en GitHub Actions.'
                         }));
                     });
                     setStatus('No se pudo conectar con la API de seguimiento.', 'error');

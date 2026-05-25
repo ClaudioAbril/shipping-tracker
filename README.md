@@ -62,28 +62,34 @@ No necesitas esperar hasta las 9:00 AM del día siguiente para verificar que tod
 
 ## 📋 Envios.html — seguimiento MailAmericas en el navegador
 
-El archivo [`Envios.html`](Envios.html) consulta movimientos de envíos MailAmericas y los muestra en una **lista cronológica** (sin iframe; MailAmericas bloquea el embebido).
+El archivo [`Envios.html`](Envios.html) consulta la **API pública de MailAmericas** (`POST https://mailamericas.com/api/tracking`) y muestra los movimientos en una lista cronológica. **No requiere 17TRACK ni token de pago.**
 
-### Uso recomendado (en vivo)
+### Uso en el navegador (recomendado)
 
-1. Copiá `.env.template` a `.env` y configurá `TRACK_17_TOKEN` (misma clave que GitHub Actions).
-2. Ejecutá:
+1. Abrí [`Envios.html`](Envios.html) (doble clic, GitHub Pages o `npm run envios`).
+2. Pegá los códigos y pulsá **Consultar**.
 
-   ```bash
-   npm run envios
-   ```
+El navegador llama directamente a MailAmericas cuando CORS lo permite. Si no (p. ej. en algunos entornos), usá el servidor local:
 
-3. Abrí [http://localhost:3456/Envios.html](http://localhost:3456/Envios.html), pegá los códigos y pulsá **Consultar**.
+```bash
+npm run envios
+```
 
-Los códigos se guardan en `localStorage` entre visitas. Si quitás un código del cuadro y consultás, deja de guardarse.
+→ [http://localhost:3456/Envios.html](http://localhost:3456/Envios.html)
 
-### GitHub Pages (sin servidor local)
+Los códigos se guardan en `localStorage`. Si eliminás uno del cuadro y consultás, deja de guardarse.
 
-En `*.github.io` la página intenta leer [`tracking-cache.json`](tracking-cache.json), generado por el workflow **Actualizar caché Envios** (manual o diario) usando los códigos de [`envios-codes.txt`](envios-codes.txt). Mantené ese archivo alineado con los códigos que quieras ver en la web estática.
+### GitHub Pages
 
-También podés apuntar a un API propio con `?api=https://tu-servidor` (debe exponer `POST /api/track` con CORS).
+Si la consulta directa falla por CORS, la página usa [`tracking-cache.json`](tracking-cache.json). Generalo con el workflow **Actualizar caché Envios** (Actions), que lee los códigos de [`envios-codes.txt`](envios-codes.txt). Mantené ese archivo alineado con tus envíos.
 
-Cada tarjeta incluye un enlace **Ver en MailAmericas** al sitio oficial.
+```bash
+npm run envios:cache
+```
+
+Cada tarjeta incluye el enlace **Ver en MailAmericas**.
+
+> El reporte por correo de [`index.js`](index.js) sigue usando 17TRACK si lo tenés configurado; `Envios.html` es independiente.
 
 ---
 

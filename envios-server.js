@@ -95,7 +95,5 @@ const server = http.createServer(async (req, res) => {
 
 server.listen(PORT, () => {
   console.log(`Envios: http://localhost:${PORT}/Envios.html`);
-  if (!process.env.TRACK_17_TOKEN) {
-    console.warn('Aviso: configure TRACK_17_TOKEN en .env para consultar movimientos.');
-  }
+  console.log('Fuente: API pública de MailAmericas (sin 17TRACK).');
 });
