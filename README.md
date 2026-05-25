@@ -60,6 +60,20 @@ No necesitas esperar hasta las 9:00 AM del día siguiente para verificar que tod
 
 ---
 
+## 📋 Envios.html — seguimiento MailAmericas en el navegador
+
+El archivo [`Envios.html`](Envios.html) es una página **estática** (sin servidor propio) para consultar envíos de MailAmericas:
+
+1. Abrila con doble clic o publicala en GitHub Pages junto al resto del repositorio.
+2. Pegá los códigos en el cuadro de texto (uno por línea o separados por coma) y pulsá **Consultar**.
+3. Los códigos se guardan en el navegador (`localStorage`) y se recuperan en la próxima visita. Si eliminás un código del cuadro y consultás de nuevo, ya no se volverá a mostrar.
+
+Cada envío muestra un panel embebido (iframe) con el seguimiento oficial de [mailamericas.com/tracking](https://mailamericas.com/tracking). El detalle de movimientos en tiempo real se ve dentro de ese panel.
+
+**Limitación:** por restricciones de seguridad del navegador (CORS y origen cruzado), la página no puede extraer automáticamente el historial de eventos fuera del iframe. Para listar movimientos parseados en la propia página haría falta un proxy en servidor.
+
+---
+
 ## 💡 Notas Adicionales
 * **Modificación de envíos**: Si en el futuro deseas rastrear nuevos códigos o cambiar los existentes, simplemente edita la variable `TRACKING_NUMBERS` en la línea 5 del archivo `index.js` y sube los cambios a tu repositorio.
 * **Precisión horaria**: Las tareas de tipo cron en GitHub Actions son gratuitas, por lo que a veces pueden iniciarse con una demora de entre 10 y 20 minutos respecto a la hora programada (9:00 AM), pero su ejecución diaria está garantizada de forma autónoma.

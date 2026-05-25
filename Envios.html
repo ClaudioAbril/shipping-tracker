@@ -3,16 +3,92 @@
 
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Estado de envíos - MailAmericas</title>
     <style>
         body {
             font-family: Arial, sans-serif;
             background: #f9f9f9;
             color: #333;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 16px;
         }
 
         h2 {
             color: #0066cc;
+        }
+
+        .panel {
+            background: #fff;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+
+        .panel label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        #codes-input {
+            width: 100%;
+            min-height: 100px;
+            padding: 10px;
+            font-family: Consolas, monospace;
+            font-size: 14px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            box-sizing: border-box;
+            resize: vertical;
+        }
+
+        .panel-actions {
+            margin-top: 12px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        #btn-consultar {
+            background: #0066cc;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        #btn-consultar:hover {
+            background: #0052a3;
+        }
+
+        #btn-consultar:disabled {
+            background: #99b3d6;
+            cursor: wait;
+        }
+
+        .ayuda {
+            font-size: 13px;
+            color: #666;
+            margin: 8px 0 0;
+        }
+
+        #status-msg {
+            font-size: 13px;
+            color: #555;
+        }
+
+        #status-msg.error {
+            color: #b71c1c;
+        }
+
+        #status-msg.warn {
+            color: #e65100;
         }
 
         .envio {
@@ -27,12 +103,13 @@
             display: flex;
             justify-content: space-between;
             margin: 10px 0;
+            gap: 4px;
         }
 
         .etapa {
             flex: 1;
             text-align: center;
-            font-size: 12px;
+            font-size: 11px;
             position: relative;
         }
 
@@ -49,8 +126,19 @@
             background: #4caf50;
         }
 
-        ul {
+        .envio ul {
             font-size: 13px;
+            padding-left: 20px;
+        }
+
+        .envio ul a {
+            color: #0066cc;
+        }
+
+        .barra-nota {
+            font-size: 12px;
+            color: #888;
+            margin: 0 0 8px;
         }
 
         iframe {
@@ -59,52 +147,186 @@
             border: none;
             margin-top: 10px;
         }
+
+        #envios-empty {
+            text-align: center;
+            color: #666;
+            padding: 24px;
+            background: #fff;
+            border: 1px dashed #ccc;
+            border-radius: 8px;
+        }
     </style>
 </head>
 
 <body>
-    <h2>📦 Estado de envíos en MailAmericas</h2>
+    <h2>Estado de envíos en MailAmericas</h2>
 
-    <div class="envio">
-        <h3>MLAR086123485EX</h3>
-        <p><strong>Estado actual:</strong> En tránsito internacional</p>
-        <div class="barra">
-            <div class="etapa activa">Almacén</div>
-            <div class="etapa activa">En Tránsito</div>
-            <div class="etapa">Llegada</div>
-            <div class="etapa">Aduana</div>
-            <div class="etapa">Distribución</div>
-            <div class="etapa">Última Milla</div>
-            <div class="etapa">Entregado</div>
+    <div class="panel">
+        <label for="codes-input">Códigos de seguimiento</label>
+        <textarea id="codes-input"
+            placeholder="MLAR086122180EX&#10;MLAR086123485EX&#10;(uno por línea o separados por coma)"></textarea>
+        <p class="ayuda">Ingresá un código por línea o separados por coma. Los códigos se guardan al consultar y se
+            recuperan en la próxima visita.</p>
+        <div class="panel-actions">
+            <button type="button" id="btn-consultar">Consultar</button>
+            <span id="status-msg" role="status"></span>
         </div>
-        <ul>
-            <li>22 mayo, 09:12 → Camino al aeropuerto</li>
-            <li>22 mayo, 16:40 → Camino al aeropuerto</li>
-        </ul>
-        <iframe src="https://mailamericas.com/tracking?number_id=MLAR086123485EX"></iframe>
     </div>
 
-    <div class="envio">
-        <h3>MLAR086122180EX</h3>
-        <p><strong>Estado actual:</strong> En tránsito internacional</p>
-        <div class="barra">
-            <div class="etapa activa">Almacén</div>
-            <div class="etapa activa">En Tránsito</div>
-            <div class="etapa">Llegada</div>
-            <div class="etapa">Aduana</div>
-            <div class="etapa">Distribución</div>
-            <div class="etapa">Última Milla</div>
-            <div class="etapa">Entregado</div>
-        </div>
-        <ul>
-            <li>22 mayo, 09:12 → Camino al aeropuerto</li>
-            <li>22 mayo, 16:40 → Camino al aeropuerto</li>
-        </ul>
-        <iframe src="https://mailamericas.com/tracking?number_id=MLAR086122180EX"></iframe>
-    </div>
+    <div id="envios-list"></div>
+    <div id="envios-empty" hidden>No hay códigos para consultar. Agregá al menos uno arriba y pulsá Consultar.</div>
 
-    <p>👉 Ambos envíos están en tránsito aéreo hacia Argentina. El siguiente paso será la llegada al país destino y
-        luego el paso por aduana.</p>
+    <script>
+        (function () {
+            var STORAGE_KEY = 'mailamericas.envios.codes';
+            var DEFAULT_CODES = ['MLAR086122180EX', 'MLAR086123485EX'];
+            var ETAPAS = ['Almacén', 'En Tránsito', 'Llegada', 'Aduana', 'Distribución', 'Última Milla', 'Entregado'];
+
+            var textarea = document.getElementById('codes-input');
+            var btnConsultar = document.getElementById('btn-consultar');
+            var statusMsg = document.getElementById('status-msg');
+            var enviosList = document.getElementById('envios-list');
+            var enviosEmpty = document.getElementById('envios-empty');
+
+            function parseTrackingCodes(text) {
+                return [...new Set(
+                    text.split(/[\n,]+/).map(function (s) { return s.trim().toUpperCase(); }).filter(Boolean)
+                )];
+            }
+
+            function trackingUrl(code) {
+                return 'https://mailamericas.com/tracking?number_id=' + encodeURIComponent(code);
+            }
+
+            function setStatus(text, type) {
+                statusMsg.textContent = text || '';
+                statusMsg.className = type ? type : '';
+            }
+
+            function loadStoredCodes() {
+                try {
+                    var raw = localStorage.getItem(STORAGE_KEY);
+                    if (raw === null) return null;
+                    var parsed = JSON.parse(raw);
+                    return Array.isArray(parsed) ? parsed : [];
+                } catch (e) {
+                    return null;
+                }
+            }
+
+            function saveCodes(codes) {
+                try {
+                    localStorage.setItem(STORAGE_KEY, JSON.stringify(codes));
+                    return true;
+                } catch (e) {
+                    setStatus('No se pudieron guardar los códigos (¿modo privado?). La consulta sigue en esta sesión.', 'warn');
+                    return false;
+                }
+            }
+
+            function buildBarra() {
+                var barra = document.createElement('div');
+                barra.className = 'barra';
+                ETAPAS.forEach(function (nombre) {
+                    var etapa = document.createElement('div');
+                    etapa.className = 'etapa';
+                    etapa.textContent = nombre;
+                    barra.appendChild(etapa);
+                });
+                return barra;
+            }
+
+            function renderEnvios(codes) {
+                enviosList.innerHTML = '';
+
+                if (codes.length === 0) {
+                    enviosEmpty.hidden = false;
+                    return;
+                }
+
+                enviosEmpty.hidden = true;
+
+                codes.forEach(function (code) {
+                    var url = trackingUrl(code);
+                    var card = document.createElement('div');
+                    card.className = 'envio';
+
+                    var h3 = document.createElement('h3');
+                    h3.textContent = code;
+                    card.appendChild(h3);
+
+                    var estado = document.createElement('p');
+                    estado.innerHTML = '<strong>Estado actual:</strong> Seguimiento en vivo — ver panel inferior';
+                    card.appendChild(estado);
+
+                    var notaBarra = document.createElement('p');
+                    notaBarra.className = 'barra-nota';
+                    notaBarra.textContent = 'El progreso detallado se muestra en el panel de MailAmericas debajo.';
+                    card.appendChild(notaBarra);
+
+                    card.appendChild(buildBarra());
+
+                    var ul = document.createElement('ul');
+                    var li = document.createElement('li');
+                    var link = document.createElement('a');
+                    link.href = url;
+                    link.target = '_blank';
+                    link.rel = 'noopener noreferrer';
+                    link.textContent = 'Abrir seguimiento en MailAmericas';
+                    li.appendChild(link);
+                    ul.appendChild(li);
+                    card.appendChild(ul);
+
+                    var iframe = document.createElement('iframe');
+                    iframe.src = url;
+                    iframe.title = 'Seguimiento MailAmericas — ' + code;
+                    iframe.loading = 'lazy';
+                    card.appendChild(iframe);
+
+                    enviosList.appendChild(card);
+                });
+            }
+
+            function consultar() {
+                btnConsultar.disabled = true;
+                setStatus('Consultando…', '');
+
+                var codes = parseTrackingCodes(textarea.value);
+                saveCodes(codes);
+                renderEnvios(codes);
+
+                if (codes.length === 0) {
+                    setStatus('No hay códigos. El listado quedó vacío.', '');
+                } else {
+                    setStatus(codes.length === 1
+                        ? '1 envío en seguimiento.'
+                        : codes.length + ' envíos en seguimiento.', '');
+                }
+
+                btnConsultar.disabled = false;
+            }
+
+            function init() {
+                var stored = loadStoredCodes();
+                var storageError = stored === null && localStorage.getItem(STORAGE_KEY) !== null;
+
+                if (stored === null) {
+                    textarea.value = DEFAULT_CODES.join('\n');
+                } else {
+                    textarea.value = stored.join('\n');
+                    if (storageError) {
+                        setStatus('No se pudieron leer los códigos guardados.', 'warn');
+                    }
+                }
+
+                btnConsultar.addEventListener('click', consultar);
+                consultar();
+            }
+
+            init();
+        })();
+    </script>
 </body>
 
 </html>
