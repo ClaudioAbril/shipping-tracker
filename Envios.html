@@ -78,6 +78,16 @@
             margin: 8px 0 0;
         }
 
+        .aviso-api {
+            font-size: 12px;
+            color: #555;
+            margin-top: 10px;
+            padding: 10px;
+            background: #f0f6ff;
+            border-radius: 6px;
+            border: 1px solid #c5d9f5;
+        }
+
         #status-msg {
             font-size: 13px;
             color: #555;
@@ -97,6 +107,11 @@
             margin: 20px 0;
             padding: 15px;
             border-radius: 8px;
+        }
+
+        .envio.error-card {
+            border-color: #f5c6cb;
+            background: #fff8f8;
         }
 
         .barra {
@@ -126,26 +141,47 @@
             background: #4caf50;
         }
 
-        .envio ul {
+        .eventos {
+            list-style: none;
+            padding: 0;
+            margin: 12px 0 0;
+            border-top: 1px solid #eee;
+            padding-top: 12px;
+        }
+
+        .eventos li {
             font-size: 13px;
-            padding-left: 20px;
+            padding: 8px 0;
+            border-bottom: 1px solid #f0f0f0;
         }
 
-        .envio ul a {
-            color: #0066cc;
+        .eventos li:last-child {
+            border-bottom: none;
         }
 
-        .barra-nota {
+        .eventos .fecha {
+            color: #666;
             font-size: 12px;
-            color: #888;
-            margin: 0 0 8px;
         }
 
-        iframe {
-            width: 100%;
-            height: 300px;
-            border: none;
+        .eventos .lugar {
+            color: #888;
+            font-size: 12px;
+        }
+
+        .eventos-vacio {
+            font-size: 13px;
+            color: #888;
+            font-style: italic;
+        }
+
+        .envio-footer {
             margin-top: 10px;
+            font-size: 12px;
+        }
+
+        .envio-footer a {
+            color: #0066cc;
         }
 
         #envios-empty {
@@ -168,6 +204,7 @@
             placeholder="MLAR086122180EX&#10;MLAR086123485EX&#10;(uno por línea o separados por coma)"></textarea>
         <p class="ayuda">Ingresá un código por línea o separados por coma. Los códigos se guardan al consultar y se
             recuperan en la próxima visita.</p>
+        <p class="aviso-api" id="api-hint" hidden></p>
         <div class="panel-actions">
             <button type="button" id="btn-consultar">Consultar</button>
             <span id="status-msg" role="status"></span>
@@ -186,6 +223,7 @@
             var textarea = document.getElementById('codes-input');
             var btnConsultar = document.getElementById('btn-consultar');
             var statusMsg = document.getElementById('status-msg');
+            var apiHint = document.getElementById('api-hint');
             var enviosList = document.getElementById('envios-list');
             var enviosEmpty = document.getElementById('envios-empty');
 
@@ -197,6 +235,26 @@
 
             function trackingUrl(code) {
                 return 'https://mailamericas.com/tracking?number_id=' + encodeURIComponent(code);
+            }
+
+            function resolveApiBase() {
+                var params = new URLSearchParams(location.search);
+                var fromQuery = params.get('api');
+                if (fromQuery) return fromQuery.replace(/\/$/, '');
+                if (location.hostname === 'localhost' || location.hostname === '127.0.0.1') {
+                    return '';
+                }
+                return '';
+            }
+
+            function updateApiHint() {
+                var onGithub = location.hostname.endsWith('github.io');
+                if (!onGithub) {
+                    apiHint.hidden = true;
+                    return;
+                }
+                apiHint.hidden = false;
+                apiHint.textContent = 'En GitHub Pages los movimientos se cargan desde tracking-cache.json (si existe) o desde un servidor API (?api=URL). Para datos en vivo: npm run envios y abrí http://localhost:3456/Envios.html';
             }
 
             function setStatus(text, type) {
@@ -225,101 +283,215 @@
                 }
             }
 
-            function buildBarra() {
+            function buildBarra(activeIndex) {
                 var barra = document.createElement('div');
                 barra.className = 'barra';
-                ETAPAS.forEach(function (nombre) {
+                ETAPAS.forEach(function (nombre, idx) {
                     var etapa = document.createElement('div');
-                    etapa.className = 'etapa';
+                    etapa.className = 'etapa' + (idx <= activeIndex ? ' activa' : '');
                     etapa.textContent = nombre;
                     barra.appendChild(etapa);
                 });
                 return barra;
             }
 
-            function renderEnvios(codes) {
-                enviosList.innerHTML = '';
+            function buildEventosList(events) {
+                if (!events || events.length === 0) {
+                    var vacio = document.createElement('p');
+                    vacio.className = 'eventos-vacio';
+                    vacio.textContent = 'Sin movimientos registrados todavía.';
+                    return vacio;
+                }
 
+                var ul = document.createElement('ul');
+                ul.className = 'eventos';
+                events.forEach(function (evt) {
+                    var li = document.createElement('li');
+                    var linea = document.createElement('div');
+                    linea.textContent = evt.description || 'Evento';
+                    li.appendChild(linea);
+                    if (evt.time) {
+                        var fecha = document.createElement('div');
+                        fecha.className = 'fecha';
+                        fecha.textContent = evt.time + (evt.location ? ' → ' + evt.location : '');
+                        li.appendChild(fecha);
+                    } else if (evt.location) {
+                        var lugar = document.createElement('div');
+                        lugar.className = 'lugar';
+                        lugar.textContent = evt.location;
+                        li.appendChild(lugar);
+                    }
+                    ul.appendChild(li);
+                });
+                return ul;
+            }
+
+            function renderPackage(pkg) {
+                var card = document.createElement('div');
+                card.className = 'envio';
+
+                var h3 = document.createElement('h3');
+                h3.textContent = pkg.number;
+                card.appendChild(h3);
+
+                var estado = document.createElement('p');
+                estado.innerHTML = '<strong>Estado actual:</strong> ' + (pkg.statusLabel || 'Consultando');
+                card.appendChild(estado);
+
+                card.appendChild(buildBarra(pkg.activeStageIndex != null ? pkg.activeStageIndex : 0));
+                card.appendChild(buildEventosList(pkg.events));
+
+                var footer = document.createElement('div');
+                footer.className = 'envio-footer';
+                var link = document.createElement('a');
+                link.href = pkg.trackingUrl || trackingUrl(pkg.number);
+                link.target = '_blank';
+                link.rel = 'noopener noreferrer';
+                link.textContent = 'Ver en MailAmericas';
+                footer.appendChild(link);
+                card.appendChild(footer);
+
+                return card;
+            }
+
+            function renderRejected(item) {
+                var card = document.createElement('div');
+                card.className = 'envio error-card';
+                card.innerHTML = '<h3>' + item.number + '</h3>' +
+                    '<p><strong>Error:</strong> ' + (item.message || 'No se pudo consultar') + '</p>' +
+                    '<div class="envio-footer"><a href="' + trackingUrl(item.number) + '" target="_blank" rel="noopener noreferrer">Intentar en MailAmericas</a></div>';
+                return card;
+            }
+
+            function renderResults(data, codes) {
+                enviosList.innerHTML = '';
                 if (codes.length === 0) {
                     enviosEmpty.hidden = false;
                     return;
                 }
-
                 enviosEmpty.hidden = true;
 
+                var byNumber = {};
+                (data.packages || []).forEach(function (p) { byNumber[p.number] = p; });
+
                 codes.forEach(function (code) {
-                    var url = trackingUrl(code);
+                    if (byNumber[code]) {
+                        enviosList.appendChild(renderPackage(byNumber[code]));
+                    }
+                });
+
+                (data.rejected || []).forEach(function (r) {
+                    if (codes.indexOf(r.number) !== -1) {
+                        enviosList.appendChild(renderRejected(r));
+                    }
+                });
+
+                codes.forEach(function (code) {
+                    if (!byNumber[code] && !(data.rejected || []).some(function (r) { return r.number === code; })) {
+                        enviosList.appendChild(renderRejected({
+                            number: code,
+                            message: 'Sin datos. Si usás GitHub Pages, ejecutá npm run envios o actualizá tracking-cache.json.'
+                        }));
+                    }
+                });
+            }
+
+            function renderLoading(codes) {
+                enviosList.innerHTML = '';
+                enviosEmpty.hidden = true;
+                codes.forEach(function (code) {
                     var card = document.createElement('div');
                     card.className = 'envio';
-
-                    var h3 = document.createElement('h3');
-                    h3.textContent = code;
-                    card.appendChild(h3);
-
-                    var estado = document.createElement('p');
-                    estado.innerHTML = '<strong>Estado actual:</strong> Seguimiento en vivo — ver panel inferior';
-                    card.appendChild(estado);
-
-                    var notaBarra = document.createElement('p');
-                    notaBarra.className = 'barra-nota';
-                    notaBarra.textContent = 'El progreso detallado se muestra en el panel de MailAmericas debajo.';
-                    card.appendChild(notaBarra);
-
-                    card.appendChild(buildBarra());
-
-                    var ul = document.createElement('ul');
-                    var li = document.createElement('li');
-                    var link = document.createElement('a');
-                    link.href = url;
-                    link.target = '_blank';
-                    link.rel = 'noopener noreferrer';
-                    link.textContent = 'Abrir seguimiento en MailAmericas';
-                    li.appendChild(link);
-                    ul.appendChild(li);
-                    card.appendChild(ul);
-
-                    var iframe = document.createElement('iframe');
-                    iframe.src = url;
-                    iframe.title = 'Seguimiento MailAmericas — ' + code;
-                    iframe.loading = 'lazy';
-                    card.appendChild(iframe);
-
+                    card.innerHTML = '<h3>' + code + '</h3><p>Consultando movimientos…</p>';
                     enviosList.appendChild(card);
                 });
             }
 
-            function consultar() {
-                btnConsultar.disabled = true;
-                setStatus('Consultando…', '');
+            async function fetchTrackingData(codes) {
+                var base = resolveApiBase();
+                var apiUrl = (base || '') + '/api/track';
 
-                var codes = parseTrackingCodes(textarea.value);
-                saveCodes(codes);
-                renderEnvios(codes);
-
-                if (codes.length === 0) {
-                    setStatus('No hay códigos. El listado quedó vacío.', '');
-                } else {
-                    setStatus(codes.length === 1
-                        ? '1 envío en seguimiento.'
-                        : codes.length + ' envíos en seguimiento.', '');
+                try {
+                    var res = await fetch(apiUrl, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ codes: codes })
+                    });
+                    if (res.ok) {
+                        return await res.json();
+                    }
+                } catch (e) {
+                    /* intentar caché */
                 }
 
+                try {
+                    var cacheRes = await fetch('tracking-cache.json');
+                    if (cacheRes.ok) {
+                        var cache = await cacheRes.json();
+                        var wanted = new Set(codes);
+                        return {
+                            packages: (cache.packages || []).filter(function (p) { return wanted.has(p.number); }),
+                            rejected: (cache.rejected || []).filter(function (r) { return wanted.has(r.number); }),
+                            fromCache: true
+                        };
+                    }
+                } catch (e2) {
+                    /* sin caché */
+                }
+
+                return null;
+            }
+
+            async function consultar() {
+                var codes = parseTrackingCodes(textarea.value);
+                saveCodes(codes);
+                btnConsultar.disabled = true;
+
+                if (codes.length === 0) {
+                    enviosList.innerHTML = '';
+                    enviosEmpty.hidden = false;
+                    setStatus('No hay códigos. El listado quedó vacío.', '');
+                    btnConsultar.disabled = false;
+                    return;
+                }
+
+                enviosEmpty.hidden = true;
+                setStatus('Consultando movimientos…', '');
+                renderLoading(codes);
+
+                var data = await fetchTrackingData(codes);
+
+                if (!data) {
+                    codes.forEach(function (code) {
+                        enviosList.innerHTML = '';
+                        enviosList.appendChild(renderRejected({
+                            number: code,
+                            message: 'No hay API disponible. Ejecutá: npm run envios (con TRACK_17_TOKEN en .env)'
+                        }));
+                    });
+                    setStatus('No se pudo conectar con la API de seguimiento.', 'error');
+                    btnConsultar.disabled = false;
+                    return;
+                }
+
+                renderResults(data, codes);
+
+                var msg = codes.length === 1 ? '1 envío consultado.' : codes.length + ' envíos consultados.';
+                if (data.fromCache) {
+                    msg += ' (datos en caché)';
+                }
+                setStatus(msg, '');
                 btnConsultar.disabled = false;
             }
 
             function init() {
+                updateApiHint();
                 var stored = loadStoredCodes();
-                var storageError = stored === null && localStorage.getItem(STORAGE_KEY) !== null;
-
                 if (stored === null) {
                     textarea.value = DEFAULT_CODES.join('\n');
                 } else {
                     textarea.value = stored.join('\n');
-                    if (storageError) {
-                        setStatus('No se pudieron leer los códigos guardados.', 'warn');
-                    }
                 }
-
                 btnConsultar.addEventListener('click', consultar);
                 consultar();
             }

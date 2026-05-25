@@ -62,15 +62,28 @@ No necesitas esperar hasta las 9:00 AM del día siguiente para verificar que tod
 
 ## 📋 Envios.html — seguimiento MailAmericas en el navegador
 
-El archivo [`Envios.html`](Envios.html) es una página **estática** (sin servidor propio) para consultar envíos de MailAmericas:
+El archivo [`Envios.html`](Envios.html) consulta movimientos de envíos MailAmericas y los muestra en una **lista cronológica** (sin iframe; MailAmericas bloquea el embebido).
 
-1. Abrila con doble clic o publicala en GitHub Pages junto al resto del repositorio.
-2. Pegá los códigos en el cuadro de texto (uno por línea o separados por coma) y pulsá **Consultar**.
-3. Los códigos se guardan en el navegador (`localStorage`) y se recuperan en la próxima visita. Si eliminás un código del cuadro y consultás de nuevo, ya no se volverá a mostrar.
+### Uso recomendado (en vivo)
 
-Cada envío muestra un panel embebido (iframe) con el seguimiento oficial de [mailamericas.com/tracking](https://mailamericas.com/tracking). El detalle de movimientos en tiempo real se ve dentro de ese panel.
+1. Copiá `.env.template` a `.env` y configurá `TRACK_17_TOKEN` (misma clave que GitHub Actions).
+2. Ejecutá:
 
-**Limitación:** por restricciones de seguridad del navegador (CORS y origen cruzado), la página no puede extraer automáticamente el historial de eventos fuera del iframe. Para listar movimientos parseados en la propia página haría falta un proxy en servidor.
+   ```bash
+   npm run envios
+   ```
+
+3. Abrí [http://localhost:3456/Envios.html](http://localhost:3456/Envios.html), pegá los códigos y pulsá **Consultar**.
+
+Los códigos se guardan en `localStorage` entre visitas. Si quitás un código del cuadro y consultás, deja de guardarse.
+
+### GitHub Pages (sin servidor local)
+
+En `*.github.io` la página intenta leer [`tracking-cache.json`](tracking-cache.json), generado por el workflow **Actualizar caché Envios** (manual o diario) usando los códigos de [`envios-codes.txt`](envios-codes.txt). Mantené ese archivo alineado con los códigos que quieras ver en la web estática.
+
+También podés apuntar a un API propio con `?api=https://tu-servidor` (debe exponer `POST /api/track` con CORS).
+
+Cada tarjeta incluye un enlace **Ver en MailAmericas** al sitio oficial.
 
 ---
 

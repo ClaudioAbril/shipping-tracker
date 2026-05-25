@@ -4,7 +4,9 @@
   "description": "Rastreador diario autónomo de envíos en 17TRACK con reportes por correo electrónico",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js"
+    "start": "node index.js",
+    "envios": "node envios-server.js",
+    "envios:cache": "node scripts/build-tracking-cache.js"
   },
   "dependencies": {
     "dotenv": "^16.4.5",
