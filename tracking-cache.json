@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-05-25T00:35:38.335Z",
+  "updatedAt": "2026-05-25T00:41:50.977Z",
   "packages": [
     {
       "number": "MLAR086122180EX",
@@ -14,6 +14,17 @@
         "Última Milla",
         "Entregado"
       ],
+      "stageSubLabels": [
+        "21 may",
+        "22 may · en curso",
+        "~3 días",
+        "~7 días",
+        "~11 días",
+        "~14 días",
+        "10 jun"
+      ],
+      "estimatedDelivery": "2026-06-10",
+      "estimatedDeliveryLabel": "10 jun",
       "events": [
         {
           "time": "22 may, 16:40",
@@ -71,6 +82,17 @@
         "Última Milla",
         "Entregado"
       ],
+      "stageSubLabels": [
+        "21 may",
+        "22 may · en curso",
+        "~3 días",
+        "~7 días",
+        "~11 días",
+        "~14 días",
+        "10 jun"
+      ],
+      "estimatedDelivery": "2026-06-10",
+      "estimatedDeliveryLabel": "10 jun",
       "events": [
         {
           "time": "22 may, 16:40",
