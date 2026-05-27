@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-05-25T00:41:50.977Z",
+  "updatedAt": "2026-05-27T16:39:56.353Z",
   "packages": [
     {
       "number": "MLAR086122180EX",
@@ -16,16 +16,26 @@
       ],
       "stageSubLabels": [
         "21 may",
-        "22 may · en curso",
-        "~3 días",
-        "~7 días",
+        "27 may · en curso",
+        "27 may",
+        "~4 días",
+        "~8 días",
         "~11 días",
-        "~14 días",
         "10 jun"
       ],
       "estimatedDelivery": "2026-06-10",
       "estimatedDeliveryLabel": "10 jun",
       "events": [
+        {
+          "time": "27 may, 07:12",
+          "description": "Vuelo",
+          "location": "Tránsito a país destino"
+        },
+        {
+          "time": "26 may, 22:22",
+          "description": "Camino al aeropuerto",
+          "location": "Tránsito a país destino"
+        },
         {
           "time": "22 may, 16:40",
           "description": "Camino al aeropuerto",
@@ -84,16 +94,26 @@
       ],
       "stageSubLabels": [
         "21 may",
-        "22 may · en curso",
-        "~3 días",
-        "~7 días",
+        "27 may · en curso",
+        "27 may",
+        "~4 días",
+        "~8 días",
         "~11 días",
-        "~14 días",
         "10 jun"
       ],
       "estimatedDelivery": "2026-06-10",
       "estimatedDeliveryLabel": "10 jun",
       "events": [
+        {
+          "time": "27 may, 07:12",
+          "description": "Vuelo",
+          "location": "Tránsito a país destino"
+        },
+        {
+          "time": "26 may, 22:22",
+          "description": "Camino al aeropuerto",
+          "location": "Tránsito a país destino"
+        },
         {
           "time": "22 may, 16:40",
           "description": "Camino al aeropuerto",
