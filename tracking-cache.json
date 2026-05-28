@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-05-27T16:39:56.353Z",
+  "updatedAt": "2026-05-28T16:55:47.857Z",
   "packages": [
     {
       "number": "MLAR086122180EX",
@@ -18,14 +18,19 @@
         "21 may",
         "27 may · en curso",
         "27 may",
-        "~4 días",
-        "~8 días",
-        "~11 días",
+        "~3 días",
+        "~7 días",
+        "~10 días",
         "10 jun"
       ],
       "estimatedDelivery": "2026-06-10",
       "estimatedDeliveryLabel": "10 jun",
       "events": [
+        {
+          "time": "27 may, 14:09",
+          "description": "Trasbordo - Escala",
+          "location": "Tránsito a país destino"
+        },
         {
           "time": "27 may, 07:12",
           "description": "Vuelo",
@@ -96,14 +101,19 @@
         "21 may",
         "27 may · en curso",
         "27 may",
-        "~4 días",
-        "~8 días",
-        "~11 días",
+        "~3 días",
+        "~7 días",
+        "~10 días",
         "10 jun"
       ],
       "estimatedDelivery": "2026-06-10",
       "estimatedDeliveryLabel": "10 jun",
       "events": [
+        {
+          "time": "27 may, 14:09",
+          "description": "Trasbordo - Escala",
+          "location": "Tránsito a país destino"
+        },
         {
           "time": "27 may, 07:12",
           "description": "Vuelo",
