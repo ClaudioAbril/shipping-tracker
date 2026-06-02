@@ -1,10 +1,10 @@
 {
-  "updatedAt": "2026-06-01T18:41:36.692Z",
+  "updatedAt": "2026-06-02T17:26:10.667Z",
   "packages": [
     {
       "number": "MLAR086122180EX",
-      "statusLabel": "En tránsito internacional",
-      "activeStageIndex": 1,
+      "statusLabel": "Llegada al país destino",
+      "activeStageIndex": 2,
       "etapas": [
         "Almacén",
         "En Tránsito",
@@ -16,16 +16,26 @@
       ],
       "stageSubLabels": [
         "21 may",
-        "27 may · en curso",
-        "27 may",
+        "1 jun",
+        "1 jun · en curso",
         "31 may",
-        "~3 días",
-        "~6 días",
+        "~2 días",
+        "~5 días",
         "10 jun"
       ],
       "estimatedDelivery": "2026-06-10",
       "estimatedDeliveryLabel": "10 jun",
       "events": [
+        {
+          "time": "2 jun, 08:06",
+          "description": "Entregado por Aerolínea",
+          "location": "Arribado a país destino"
+        },
+        {
+          "time": "1 jun, 20:07",
+          "description": "Vuelo",
+          "location": "Tránsito a país destino"
+        },
         {
           "time": "27 may, 14:09",
           "description": "Trasbordo - Escala",
@@ -86,8 +96,8 @@
     },
     {
       "number": "MLAR086123485EX",
-      "statusLabel": "En tránsito internacional",
-      "activeStageIndex": 1,
+      "statusLabel": "Llegada al país destino",
+      "activeStageIndex": 2,
       "etapas": [
         "Almacén",
         "En Tránsito",
@@ -99,16 +109,26 @@
       ],
       "stageSubLabels": [
         "21 may",
-        "27 may · en curso",
-        "27 may",
+        "1 jun",
+        "1 jun · en curso",
         "31 may",
-        "~3 días",
-        "~6 días",
+        "~2 días",
+        "~5 días",
         "10 jun"
       ],
       "estimatedDelivery": "2026-06-10",
       "estimatedDeliveryLabel": "10 jun",
       "events": [
+        {
+          "time": "2 jun, 08:06",
+          "description": "Entregado por Aerolínea",
+          "location": "Arribado a país destino"
+        },
+        {
+          "time": "1 jun, 20:07",
+          "description": "Vuelo",
+          "location": "Tránsito a país destino"
+        },
         {
           "time": "27 may, 14:09",
           "description": "Trasbordo - Escala",
