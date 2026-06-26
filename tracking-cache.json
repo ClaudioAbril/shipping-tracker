@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-06-25T15:40:54.035Z",
+  "updatedAt": "2026-06-26T15:24:50.600Z",
   "packages": [
     {
       "number": "MLAR086122180EX",
@@ -178,6 +178,11 @@
           "time": "6 jun, 19:49",
           "description": "Entregado",
           "location": "Proceso finalizado — CIUDAD AUTONOMA BUENOS AIRES"
+        },
+        {
+          "time": "6 jun, 08:15",
+          "description": "En manos del cartero",
+          "location": "Sucursal de entrega — CIUDAD AUTONOMA BUENOS AIRES"
         },
         {
           "time": "6 jun, 08:00",
