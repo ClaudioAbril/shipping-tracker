@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-10-15T17:39:38.673Z",
+  "updatedAt": "2026-10-16T17:12:41.353Z",
   "packages": [
     {
       "number": "MLAR086122180EX",
@@ -134,12 +134,12 @@
         {
           "time": "19 may, 12:22",
           "description": "CUIL validado OK",
-          "location": "Tax ID"
+          "location": "Buyer info"
         },
         {
           "time": "19 may, 12:22",
           "description": "Validación TN OK",
-          "location": "Tax ID"
+          "location": "Buyer info"
         },
         {
           "time": "19 may, 12:22",
@@ -287,12 +287,12 @@
         {
           "time": "19 may, 12:10",
           "description": "Validación TN OK",
-          "location": "Tax ID"
+          "location": "Buyer info"
         },
         {
           "time": "19 may, 12:10",
           "description": "CUIL validado OK",
-          "location": "Tax ID"
+          "location": "Buyer info"
         },
         {
           "time": "19 may, 12:10",
